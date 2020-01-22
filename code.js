@@ -1,7 +1,6 @@
-
 var N = 1600 // number of input samples
     var q = 200 // number var N = 1600 // number of input samples
-    var M = 10// number of circles
+    var M = 100// number of circles
     var q = 2000 // number of output samples
     var viewbox = {width: 1080};
     var setupDone = false;
@@ -78,6 +77,21 @@ var N = 1600 // number of input samples
         }
         
       }*/
+      let writer = createWriter('TheShit.txt');
+
+      writer.write("# Creating sketches\n")
+      
+      for (let i =0; i<M ; ++i)
+      {
+        
+        writer.write("sketch"+i+" = sketches.add(xyPlane)\n")
+        writer.write("sketchCircles"+i+" = sketch"+i+".sketchCurves.sketchCircles\n")
+
+      }
+      
+
+      writer.write("# Defining cirlces\n")
+      
       for (let i =0; i<M ; ++i)
       {
       e1 = DFT[i];
@@ -97,24 +111,54 @@ var N = 1600 // number of input samples
         x2 =0
         }
         
-        d = ((((x1-x2)^(2))+((y1-y2)^(2)))^(1/2))
+        d = dist(x1,y1,x2,y2)
+        //adds a new scetch for each circle
+
+        
+        
+
+        
+        //places circle on canvas
         
         if (d>0)
         {
-          console.log("circle"+i+"= circles.addByCenterRadius(adsk.core.Point3D.create("+x1+", "+y1+",0 ), "+d+")")
+          writer.write("circle"+i+"= sketchCircles"+i+".addByCenterRadius(adsk.core.Point3D.create("+x1+", "+y1+", "+i*5+"), "+d+")\n")
         }
         
         else
         {
           r = d*-1
-         console.log("circle"+i+"= circles.addByCenterRadius(adsk.core.Point3D.create("+x1+", "+y1+",0 ), "+r+")") 
+         writer.write("circle"+i+"= sketchCircles"+i+".addByCenterRadius(adsk.core.Point3D.create("+x1+", "+y1+", "+i*5+"), "+r+")\n") 
         }
+        
+        
+
         
         
       }
       
+
+      writer.write("# extruding and bodies\n")
+      
+      for (let i =0; i<M ; ++i){
+        
+        //defines circle to prof
+        writer.write("prof"+i+" = sketch"+i+".profiles.item(0)\n")
+        
+        //sets circle to be extracted
+        writer.write("extrude"+i+" = extrudes.addSimple(prof"+i+", distance, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)\n")    
+        
+        //defines the body for the extraction
+        writer.write("body"+i+" = extrude"+i+".bodies.item(0)\n")
+        
+        //names body in viewer
+        writer.write("body"+i+".name = "+"'cirlce"+i+"'\n")
+
+        
+      }
       
       
+      writer.close();
        //console.log(DFT);
         setupDone = true
     }
@@ -185,4 +229,3 @@ function keyPressed(){
               console.log(r);
         }
     }}
-
