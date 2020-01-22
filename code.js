@@ -1,6 +1,6 @@
 var N = 1600 // number of input samples
     var q = 200 // number var N = 1600 // number of input samples
-    var M = 100// number of circles
+    var M = 3// number of circles
     var q = 2000 // number of output samples
     var viewbox = {width: 1080};
     var setupDone = false;
@@ -79,7 +79,7 @@ var N = 1600 // number of input samples
       }*/
       let writer = createWriter('TheShit.txt');
 
-      writer.write("# Creating sketches\n")
+      writer.write("# Creating sketches\n\n\n")
       
       for (let i =0; i<M ; ++i)
       {
@@ -90,7 +90,7 @@ var N = 1600 // number of input samples
       }
       
 
-      writer.write("# Defining cirlces\n")
+      writer.write("# Defining cirlces\n\n\n")
       
       for (let i =0; i<M ; ++i)
       {
@@ -138,7 +138,7 @@ var N = 1600 // number of input samples
       }
       
 
-      writer.write("# extruding and bodies\n")
+      writer.write("# extruding and bodies\n\n\n")
       
       for (let i =0; i<M ; ++i){
         
@@ -146,14 +146,81 @@ var N = 1600 // number of input samples
         writer.write("prof"+i+" = sketch"+i+".profiles.item(0)\n")
         
         //sets circle to be extracted
-        writer.write("extrude"+i+" = extrudes.addSimple(prof"+i+", distance, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)\n")    
+        writer.write("extrude"+i+" = extrudes.addSimple(prof"+i+", distance, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)\n")   
+        
+        //sets circle to component 
+        writer.write("extInput"+i+" = extrudes.createInput(prof"+i+", adsk.fusion.FeatureOperations.NewComponentFeatureOperation)\n")
+        
+        //sets up extraction
+        writer.write("extInput"+i+".setDistanceExtent(True, distance)\n")
+        writer.write("extInput"+i+".isSolid = True\n")
+        
+        //extracts
+        writer.write("ext"+i+" = extrudes.add(extInput"+i+")\n")
+        
         
         //defines the body for the extraction
-        writer.write("body"+i+" = extrude"+i+".bodies.item(0)\n")
+        //writer.write("body"+i+" = extrude"+i+".bodies.item(0)\n")
         
         //names body in viewer
-        writer.write("body"+i+".name = "+"'cirlce"+i+"'\n")
+        //writer.write("body"+i+".name = "+"'cirlce"+i+"'\n")
 
+        
+      }
+      
+      for (let i =0; i<M ; ++i){
+        writer.write("sideFace"+i+" = ext"+i+".sideFaces.item(0)\n")
+        
+        //set face to joint
+        writer.write("geoS"+i+" = adsk.fusion.JointGeometry.createByNonPlanarFace(sideFace"+i+", adsk.fusion.JointKeyPointTypes.StartKeyPoint)\n")
+        writer.write("geoC"+i+" = adsk.fusion.JointGeometry.createByNonPlanarFace(sideFace"+i+", adsk.fusion.JointKeyPointTypes.CenterKeyPoint)\n")
+        
+      }
+      
+      
+      
+      for (let i =0; i<M ; ++i){
+        j = i+1
+       writer.write("# Creating joints\n\n\n")
+        
+        //get side face for each circle
+
+        
+        //start making joints
+        writer.write("jointInput"+i+" = joints.createInput(geoS"+i+", geoC"+j+")\n")
+        
+        
+        writer.write("# Set the joint input\n\n\n")
+        writer.write("angle = adsk.core.ValueInput.createByString('90 deg')\n")
+        writer.write("jointInput"+i+".angle = angle\n")
+        writer.write("offset = adsk.core.ValueInput.createByString('1 cm')\n")
+        writer.write("jointInput"+i+".offset = offset\n")
+        writer.write("jointInput"+i+".isFlipped = True\n")
+        writer.write("jointInput"+i+".setAsRevoluteJointMotion(adsk.fusion.JointDirections.ZAxisJointDirection)\n")
+        
+        
+        writer.write("# Create the joint\n\n")
+        writer.write("joint"+i+" = joints.add(jointInput"+i+")")
+        writer.write("revoluteMotion = joint"+i+".jointMotion\n")
+        writer.write("limits = revoluteMotion.rotationLimits\n")
+        writer.write("limits.isMinimumValueEnabled = True\n")
+        writer.write("limits.minimumValue = 3.14 / 3\n")
+        writer.write("limits.isMaximumValueEnabled = True\n")
+        writer.write("limits.maximumValue = 3.14 / 3 * 2\n")
+        writer.write("\n")
+        writer.write("\n")
+        
+        
+       
+        
+        
+        
+        
+
+        
+
+        
+        
         
       }
       
