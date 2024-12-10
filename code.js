@@ -240,7 +240,7 @@ var N = 1600 // number of input samples
             // Calculate the current point.
             let p = [0, 0];
             for (let i = 0; i < M; ++i) {
-            p = add(p, mul(DFT[i], expim(a * K[i])));
+              p = add(p, mul(DFT[i], expim(a * K[i])));
             }
             // Zoom.
             translate(width / 2, height / 2);
@@ -255,14 +255,15 @@ var N = 1600 // number of input samples
               //console.log(p[0]);
               //console.log(p[1]);
              
-            p = add(p, mul(DFT[i], expim(a * K[i])));
+              p = add(p, mul(DFT[i], expim(a * K[i])));
             }
             // Draw lines.
-            /*
-            context.beginPath();
-            context.moveTo(0, 0);
-            */
+            
+            // context.beginPath();
+            // context.moveTo(0, 0);
+            
             stroke(125);
+            strokeWeight(1)
             for (let i = 0, p = [0, 0]; i < M; ++i) {
                 prevP = p;
                 p = add(p, mul(DFT[i], expim(a * K[i])))
@@ -271,12 +272,14 @@ var N = 1600 // number of input samples
             // Draw the path.
             beginShape();
             noFill();
-            stroke(255)
+            stroke(133,47,252)
+            strokeWeight(2)
             if (R.length < q) R.push(p);
             for (let i = 1, n = R.length; i < n; ++i) {
                 vertex(...R[i]);
             }
             endShape();
+            strokeWeight(0.8)
             t+=speed.value();
         }
     }
