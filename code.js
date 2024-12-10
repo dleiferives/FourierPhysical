@@ -1,6 +1,6 @@
 var N = 1600 // number of input samples
     var q = 200 // number var N = 1600 // number of input samples
-    var M = 3// number of circles
+    var M = 8// number of circles
     var q = 2000 // number of output samples
     var viewbox = {width: 1080};
     var setupDone = false;
@@ -33,7 +33,7 @@ var N = 1600 // number of input samples
             .then(svg => svg.documentElement);
         createCanvas(1080, 720);
         zoom = createSlider(1,50,10);
-        speed = createSlider(0,10,0);
+        speed = createSlider(0.2,10,0);
         viewbox = svg.viewBox.baseVal
         let path2 = svg.querySelector("path")
         l = path2.getTotalLength()
@@ -77,7 +77,7 @@ var N = 1600 // number of input samples
         }
         
       }*/
-      let writer = createWriter('TheShit.txt');
+      let writer = createWriter('Fusion360GearSketch_export.txt');
 
       writer.write("# Creating sketches\n\n\n")
       
